@@ -2,6 +2,8 @@ package org.example.telegramBot;
 
 import org.example.controller.AdminController;
 import org.example.controller.MainController;
+import org.example.modul.Profile;
+import org.example.repository.UserRepository;
 import org.example.servise.UserServise;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,6 +39,16 @@ public class MyTelegramBot extends TelegramLongPollingBot {
 
         if (update.hasMessage()) {
             Message message = update.getMessage();
+            if (!userServise.isExists(message.getFrom().getId())){
+                System.out.println("working");
+                Profile profile = new Profile();
+                profile.setName(message.getFrom().getFirstName());
+                profile.setUserName(message.getFrom().getUserName());
+                profile.setUserId(message.getFrom().getId());
+                userServise.addUser(profile);
+            }
+
+
             System.out.println(message.getFrom().getId());
             System.out.println(message.getFrom().getFirstName());
 

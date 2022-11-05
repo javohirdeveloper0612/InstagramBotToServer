@@ -1,6 +1,7 @@
 package org.example.controller;
 
 import org.example.enums.StepStatus;
+import org.example.repository.UserRepository;
 import org.example.telegramBot.MyTelegramBot;
 import org.example.util.Button;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,6 +10,8 @@ import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
 
+import java.util.List;
+
 @Controller
 public class AdminController {
 
@@ -16,6 +19,9 @@ public class AdminController {
     private MainController mainController;
     @Autowired
     private MyTelegramBot myTelegramBot;
+
+    @Autowired
+    private UserRepository userRepository;
 
     private StepStatus step = StepStatus.END;
 
@@ -41,14 +47,29 @@ public class AdminController {
                 sendMessage.setText("Reklama yuboring: ");
                 step = StepStatus.START;
                 myTelegramBot.send(sendMessage);
-                return;
 
-            } else if (step.equals(StepStatus.START)) {
-                SendMessage sendMessage = new SendMessage();
-                sendMessage.setChatId("5723825009");
-                sendMessage.setText(text);
+            } else if (text.equals("bekorqil")) {
                 step = StepStatus.END;
+                SendMessage sendMessage = new SendMessage();
+                sendMessage.setChatId(message.getChatId());
+                sendMessage.setText("Reklama bekor qilindi");
                 myTelegramBot.send(sendMessage);
+            } else if (step.equals(StepStatus.START) && !text.equals("bekorqil")) {
+                List<Long> usersId = userRepository.getUsers();
+
+                SendMessage sendMessage = new SendMessage();
+                for (Long aLong : usersId) {
+                    if (aLong != null){
+                        sendMessage.setChatId(aLong);
+                        sendMessage.setText(text);
+                        myTelegramBot.send(sendMessage);
+                    }
+                }
+
+                step = StepStatus.END;
+
+            } else if (text.equals("User Count")) {
+                userList(message);
             } else if (text.startsWith("https://www.instagram.com/p")) {
                 mainController.getUrlAndSendVideo(message, text);
             } else if (text.startsWith("https://www.instagram.com/reel")) {
@@ -70,6 +91,19 @@ public class AdminController {
                     "Этот бот позволяет скачивать видео и фото только из Instagram.");
             myTelegramBot.send(sendMessage);
         }
+
+    }
+
+    private void userList(Message message) {
+
+       long count= userRepository.getUsersCount();
+
+       SendMessage sendMessage = new SendMessage();
+       sendMessage.setChatId(message.getChatId());
+       sendMessage.setText("Botdan hozirda: " + count + " foydalanuvchi mavjud \n\n" +
+               "\uD83D\uDCE5 @isnta_video_bot");
+       myTelegramBot.send(sendMessage);
+
 
     }
 

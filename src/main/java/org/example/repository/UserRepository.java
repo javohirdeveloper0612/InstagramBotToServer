@@ -7,21 +7,24 @@ import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Controller;
 
+import java.util.List;
+
 @Controller
 public class UserRepository {
     @Autowired
     JdbcTemplate jdbcTemplate;
 
-    public boolean isExistsUser(Long id){
-        long userId=0;
-        String sql = "select userId from profile where userId = " + id;
-         userId = jdbcTemplate.queryForObject(sql, Long.class);
-        System.out.println(userId);
 
-        if (userId != 0){
-            return false;
-        }
-        return true;
+
+    public String name (String str){
+        String sql = "select name from profie where name = '" + str + "'";
+
+        return jdbcTemplate.queryForObject(sql, String.class);
+    }
+
+    public List<Long> getUsers(){
+        String sql = "select userId from profile" ;
+        return jdbcTemplate.queryForList( sql, Long.class);
     }
 
     public void addUser(Profile profile) {
@@ -30,5 +33,11 @@ public class UserRepository {
 
         System.out.println(sql);
          jdbcTemplate.update(sql,profile.getName(),profile.getUserName(),profile.getUserId());
+    }
+
+    public Long getUsersCount(){
+        String sql = "select count(userId) from profile";
+
+        return jdbcTemplate.queryForObject(sql,Long.class);
     }
 }

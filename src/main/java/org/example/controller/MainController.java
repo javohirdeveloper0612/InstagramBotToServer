@@ -31,8 +31,7 @@ public class MainController {
         sendMessage.setText("🔥 Hi! This bot helps you to save photos, videos, carousels and many more from Instagram.\n" +
                 "To get photo/video/carousel/reels/IGTV send URL of the post to the bot 🔗🔗.\n\n" +
                 "🔥 Привет! Бот позволяет сохранять фото, все типы видео, галереи и прочее из Instagram.\n" +
-                "Чтобы скачать фото/видео/галерею/рилз/IGTV просто пришлите ссылку на пост.\n" +
-                "Чтобы скачать фото и описание профиля отправьте юзернейм 🔗🔗");
+                "Чтобы скачать фото/видео/галерею/рилз/IGTV просто пришлите ссылку на пост. 🔗🔗");
         myTelegramBot.send(sendMessage);
 
 
@@ -185,7 +184,7 @@ public class MainController {
         sendVideo.setChatId(message.getChatId());
         sendVideo.setVideo(inputFile);
         sendVideo.setCaption("This video shows how to use the bot \n\n" +
-                "@insta_video_bot");
+                "\uD83D\uDCE5 @isnta_video_bot");
         myTelegramBot.send(sendVideo);
     }
 
@@ -196,8 +195,9 @@ public class MainController {
         sendPhoto.setChatId(message.getChatId());
         sendPhoto.setPhoto(inputFile);
         sendPhoto.setCaption("Send a message to this bot and we will respond @javaDeveloper_bot \n\n" +
-                "gitHub account https://github.com/javohirdeveloper0612?tab=repositories\n\n" +
-                "@insta_video_bot");
+                "gitHub account: https://github.com/javohirdeveloper0612?tab=repositories\n\n" +
+                "linKedln account: https://www.linkedin.com/in/javohir-yallayev-793a53232 \n\n" +
+                "\uD83D\uDCE5 @isnta_video_bot");
 
         myTelegramBot.send(sendPhoto);
     }
