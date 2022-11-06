@@ -22,7 +22,7 @@ public class UserRepository {
         return jdbcTemplate.queryForObject(sql, String.class);
     }
 
-    public List<Long> getUsers(){
+    public List<Long> getUserId(){
         String sql = "select userId from profile" ;
         return jdbcTemplate.queryForList( sql, Long.class);
     }
@@ -39,5 +39,12 @@ public class UserRepository {
         String sql = "select count(userId) from profile";
 
         return jdbcTemplate.queryForObject(sql,Long.class);
+    }
+
+    public List<Profile> getUsersList() {
+        String sql = "select * from profile";
+
+        return jdbcTemplate.query(sql, new BeanPropertyRowMapper<>(Profile.class));
+
     }
 }

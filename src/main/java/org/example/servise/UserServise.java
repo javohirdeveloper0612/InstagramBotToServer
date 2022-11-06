@@ -13,7 +13,7 @@ public class UserServise {
     private UserRepository userRepository;
 
     public boolean isExists(Long id){
-       List<Long> userId = userRepository.getUsers();
+       List<Long> userId = userRepository.getUserId();
         for (Long aLong : userId) {
             if (aLong.equals(id)){
                 return true;

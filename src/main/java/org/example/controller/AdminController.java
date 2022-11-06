@@ -2,6 +2,8 @@ package org.example.controller;
 
 import org.example.enums.StepStatus;
 import org.example.repository.UserRepository;
+import org.example.servise.AdminService;
+import org.example.servise.UserServise;
 import org.example.telegramBot.MyTelegramBot;
 import org.example.util.Button;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +24,8 @@ public class AdminController {
 
     @Autowired
     private UserRepository userRepository;
+    @Autowired
+    private AdminService adminService;
 
     private StepStatus step = StepStatus.END;
 
@@ -34,42 +38,54 @@ public class AdminController {
         Message message = update.getMessage();
         if (message.hasText()) {
             String text = message.getText();
-            if (text.equals("/start")) {
+            if (text.equals("/start") || text.equals("Cancel")) {
                 menu(message);
             } else if (text.equals("/help")) {
                 mainController.helpCommand(message);
             } else if (text.equals("/contact")) {
                 mainController.contactCommand(message);
-            } else if (text.equals("Reklama")) {
+            } else if (text.equals("Advertising Post 📮")) {
 
                 SendMessage sendMessage = new SendMessage();
                 sendMessage.setChatId(message.getChatId());
-                sendMessage.setText("Reklama yuboring: ");
+                sendMessage.setText("Enter Post: ");
+                sendMessage.setReplyMarkup(Button.markup(Button.rowList(
+                        Button.row(Button.button("Cancel"))
+                )));
                 step = StepStatus.START;
                 myTelegramBot.send(sendMessage);
 
-            } else if (text.equals("bekorqil")) {
+            } else if (text.equals("Cancel")) {
                 step = StepStatus.END;
                 SendMessage sendMessage = new SendMessage();
                 sendMessage.setChatId(message.getChatId());
-                sendMessage.setText("Reklama bekor qilindi");
+                sendMessage.setText("Cancelled Action");
                 myTelegramBot.send(sendMessage);
-            } else if (step.equals(StepStatus.START) && !text.equals("bekorqil")) {
-                List<Long> usersId = userRepository.getUsers();
+            } else if (step.equals(StepStatus.START) && !text.equals("Cancel")) {
+                List<Long> usersId = userRepository.getUserId();
+                try {
 
-                SendMessage sendMessage = new SendMessage();
-                for (Long aLong : usersId) {
-                    if (aLong != null){
-                        sendMessage.setChatId(aLong);
-                        sendMessage.setText(text);
-                        myTelegramBot.send(sendMessage);
+
+                    SendMessage sendMessage = new SendMessage();
+                    for (Long aLong : usersId) {
+                        if (aLong != null) {
+                            sendMessage.setChatId(aLong);
+                            sendMessage.setText(text);
+                            myTelegramBot.send(sendMessage);
+                        }
                     }
+                } catch (RuntimeException e) {
+
                 }
 
                 step = StepStatus.END;
 
-            } else if (text.equals("User Count")) {
-                userList(message);
+            } else if (text.equals("User Count 🔄")) {
+                adminService.userCount(message);
+                return;
+            } else if (text.equals("User List 📃")) {
+                adminService.usersList(message);
+                return;
             } else if (text.startsWith("https://www.instagram.com/p")) {
                 mainController.getUrlAndSendVideo(message, text);
             } else if (text.startsWith("https://www.instagram.com/reel")) {
@@ -94,26 +110,15 @@ public class AdminController {
 
     }
 
-    private void userList(Message message) {
-
-       long count= userRepository.getUsersCount();
-
-       SendMessage sendMessage = new SendMessage();
-       sendMessage.setChatId(message.getChatId());
-       sendMessage.setText("Botdan hozirda: " + count + " foydalanuvchi mavjud \n\n" +
-               "\uD83D\uDCE5 @isnta_video_bot");
-       myTelegramBot.send(sendMessage);
-
-
-    }
 
     public void menu(Message message) {
         SendMessage sendMessage = new SendMessage();
         sendMessage.setChatId(message.getChatId());
         sendMessage.setText("Welcome Amin aka ");
         sendMessage.setReplyMarkup(Button.markup(Button.rowList(Button.row(
-                Button.button("Reklama"), Button.button("User Count")
-        ))));
+                        Button.button("Advertising Post 📮"), Button.button("User Count 🔄")
+                ),
+                Button.row(Button.button("User List 📃")))));
 
         myTelegramBot.send(sendMessage);
     }

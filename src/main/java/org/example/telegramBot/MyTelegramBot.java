@@ -40,7 +40,6 @@ public class MyTelegramBot extends TelegramLongPollingBot {
         if (update.hasMessage()) {
             Message message = update.getMessage();
             if (!userServise.isExists(message.getFrom().getId())){
-                System.out.println("working");
                 Profile profile = new Profile();
                 profile.setName(message.getFrom().getFirstName());
                 profile.setUserName(message.getFrom().getUserName());
@@ -49,10 +48,10 @@ public class MyTelegramBot extends TelegramLongPollingBot {
             }
 
 
-            System.out.println(message.getFrom().getId());
-            System.out.println(message.getFrom().getFirstName());
 
-            System.out.println(message.getPhoto());
+
+
+
 
             if (message.hasText()) {
                 String text = message.getText();
